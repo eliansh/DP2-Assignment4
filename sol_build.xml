@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<project name="WF-4" default="build-server" basedir=".">
+
+	<property name="src.dir" location="${basedir}/src"/>
+	<property name="wsdl.dir" location="${basedir}/wsdl"/>
+	<property name="xsd.dir" location="${basedir}/xsd"/>
+	<property name="build.dir" location="${basedir}/build"/>
+	<property name="lib.dir" location="${basedir}/lib"/>
+	<property name="gen-src.dir" location="${basedir}/gen-src"/>
+	<property name="custom.dir" location="${basedir}/custom"/>
+	
+	<property name="controlURL" value="http://localhost:7070/wfcontrol" />
+	<property name="infoURL" value="http://localhost:7071/wfinfo" />
+	<property name="infoWSDL" value="${infoURL}?wsdl" />
+	<property name="controlWSDL" value="${controlURL}?wsdl" />
+		
+	<property name="server.include" value="it/polito/dp2/WF/sol4/server" />
+	<property name="server.package" value="it.polito.dp2.WF.sol4.server" />
+	<property name="server.build.dir" location="${build.dir}/${server.include}" />
+	<property name="server.gen-src.dir" location="${gen-src.dir}/${server.include}" />
+	
+	<property name="client1.include" value="it/polito/dp2/WF/sol4/client1" />
+	<property name="client1.package" value="it.polito.dp2.WF.sol4.client1" />
+	<property name="client1.build.dir" location="${build.dir}/${client1.include}" />
+	<property name="client1.gen-src.dir" location="${gen-src.dir}/${client1.include}" />
+	
+	<property name="client2.include" value="it/polito/dp2/WF/sol4/client2" />
+	<property name="client2.package" value="it.polito.dp2.WF.sol4.client2" />
+	<property name="client2.build.dir" location="${build.dir}/${client2.include}" />
+	<property name="client2.gen-src.dir" location="${gen-src.dir}/${client2.include}" />
+
+	<property name="workflow.filename" value="Workflow.wsdl"/>
+	<property name="workflow.orig" location="${wsdl.dir}/${workflow.filename}"/>
+	<property name="workflow.server.package" value="${server.package}.workflow"/>
+	<property name="workflow.client1.package" value="${client1.package}.workflow"/>
+	<property name="workflow.client2.package" value="${client2.package}.workflow"/>
+
+	
+	<path id="workflow.classpath">
+		<pathelement location="${lib.dir}/WF.jar" />
+		<pathelement location="${lib.dir}/WFRandom.jar" />
+		<pathelement location="${lib.dir}/lab4.jar" />
+		<pathelement path="${build.dir}" />
+	</path>
+
+    <target name="clean-server">
+        <delete dir="${server.gen-src.dir}"/>
+    	<delete dir="${server.build.dir}" />
+    	<delete dir="${build.dir}/META-INF"/>
+    </target>
+
+	<target name="init-server" depends="clean-server">
+		<mkdir dir="${build.dir}/META-INF"/>
+		<mkdir dir="${server.gen-src.dir}"/>
+	</target>
+	
+   <target name="compile-server.wsdl" depends="init-server">
+      <exec executable="wsimport">
+        <arg line="-d '${build.dir}' -p ${workflow.server.package} -s '${gen-src.dir}' -keep '${workflow.orig}'"/>
+      </exec>
+   </target>
+	
+   <target name="build-server" depends="compile-server.wsdl">
+    	<!-- copy wsdl file to META-INF directory -->
+    	<copy toDir="${build.dir}/META-INF" overwrite="true">
+        	<fileset dir="${wsdl.dir}">
+				<include name="Workflow.xsd"/>
+ 		  		<include name="Workflow.wsdl"/>
+        		
+			</fileset>
+            	
+      	</copy>
+   	<javac debug="on" 
+   				       fork="true"
+   				       destdir="${build.dir}" 
+   				       srcdir="${src.dir}"
+   					   includeantruntime="false"
+   					   classpath="./lib/junit-4.5.jar">
+   									<src path="${src.dir}"/>
+   									<include name="it/polito/dp2/WF/sol4/server/**" />
+   									<include name="it/polito/dp2/WF/lab4/tests/**" />
+   									<include name="./lib/it/polito/dp2/WF/lab4/tests/**" />
+   									<classpath>
+   										<path refid="workflow.classpath" />
+   									</classpath>
+   				</javac>
+   </target>
+	
+	
+
+    <target name="clean-client1">
+        <delete dir="${client1.gen-src.dir}"/>
+    	<delete dir="${client1.build.dir}" />
+    </target>
+
+	<target name="init-client1" depends="clean-client1">
+		<mkdir dir="${client1.gen-src.dir}"/>
+	</target>
+	
+   <target name="compile-client1.wsdl">
+      <exec executable="wsimport">
+        <arg line="-d '${build.dir}' -p ${workflow.client1.package} -s '${gen-src.dir}' -keep '${workflow.orig}'"/>
+      </exec>
+   </target>
+	
+	<target name="build-client1" depends="init-client1,compile-client1.wsdl">
+		<javac
+			debug="on" 
+			fork="true" 
+			destdir="${build.dir}" 
+			srcdir="${src.dir}" 
+			includeantruntime="false" 
+			includes="${client1.include}/*"> 
+			<classpath>
+			 <pathelement location="${lib.dir}/WF.jar" />
+			 <pathelement path="${build.dir}" />
+			 <pathelement path="${client1.include}" />
+			</classpath>   
+		 </javac>
+	</target>
+	
+	
+	<target name="clean-client2">
+	        <delete dir="${client2.gen-src.dir}"/>
+	    	<delete dir="${client2.build.dir}" />
+	    </target>
+
+		<target name="init-client2" depends="clean-client2">
+			<mkdir dir="${client2.gen-src.dir}"/>
+		</target>
+		
+	   <target name="compile-client2.wsdl">
+	      <exec executable="wsimport">
+	        <arg line="-d '${build.dir}' -p ${workflow.client2.package} -s '${gen-src.dir}' -keep '${workflow.orig}'"/>
+	      </exec>
+	   </target>
+		
+		<target name="build-client" depends="init-client2,compile-client2.wsdl,build-client1">
+			<javac debug="on" fork="true" destdir="${build.dir}" srcdir="${src.dir}" includeantruntime="false" includes="${client2.include}/*" />
+		</target>
+   
+</project>

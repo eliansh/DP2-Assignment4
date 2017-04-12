@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xsd:schema targetNamespace="http://www.example.org/Workflow/" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:wf="http://www.example.org/Workflow/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="qualified">
+
+	<simpleType name="nameType">
+	 <xsd:annotation><xsd:documentation>Type which represents the name</xsd:documentation></xsd:annotation>
+	    <restriction base="string">
+		    	<pattern value="[A-Za-z][A-Za-z0-9]*"/>
+		</restriction>
+    </simpleType>
+    
+     <simpleType name="roleType">
+	    <restriction base="string">
+		    		<pattern value="[A-Za-z]+"/>
+		    	</restriction>
+    </simpleType>
+    
+     <complexType name="actorType">
+    	<attribute name="actorName" use="required" type="string"></attribute>
+    	<attribute name="actorRole" use="required" type="string"></attribute>
+    </complexType>	
+    
+    <complexType name="workflowType">
+    	<sequence>
+    		<element name="action" minOccurs="0" maxOccurs="unbounded" type="wf:actionType"></element>
+    		<element name="process" minOccurs="0" maxOccurs="unbounded" type="wf:processType"></element>
+    	</sequence>		    	
+		<attribute name="flowName" use="required" type="wf:nameType"/>
+	</complexType>
+  
+    <complexType name="actionType">
+    	<sequence>
+    	    <element name="simpleAct" minOccurs="0" maxOccurs="1" type="wf:simpleActType"></element>
+    		<element name="processAct" minOccurs="0" maxOccurs="1" type="wf:processActType"></element>
+    	</sequence>
+    	<attribute name="actionName" use="required" type="wf:nameType"/>
+    	<attribute name="actionRole" use="required" type="wf:roleType"/>
+    	<attribute name="automaticallyInstantiated" use="required" type="boolean"/>
+    </complexType>
+    
+    <complexType name="simpleActType">
+    	<sequence>
+    		<element name="nextAction" minOccurs="0" maxOccurs="unbounded" type="wf:nameType"></element>
+    	</sequence>
+    </complexType>
+
+    
+    <complexType name="processActType">
+    	<attribute name="relatedWorkFlow" use="required" type="wf:nameType"/>
+    </complexType>
+        
+     <complexType name="processType">
+    	<sequence>
+		<element name="actionStatus" minOccurs="0" maxOccurs="unbounded" type="wf:actionStatusType"></element>
+    	</sequence>
+    	<attribute name="startTime" use="required" type="dateTime"></attribute>
+    </complexType>
+    
+    
+     <complexType name="actionStatusType">
+    	<sequence>
+    		<element name="actor" minOccurs="0" maxOccurs="1" type="wf:actorType"></element>
+    	</sequence>
+    	<attribute name="actionStatName" use="required" type="wf:nameType"></attribute>
+    	<attribute name="terminated" use="required" type="boolean"></attribute>
+    	<attribute name="terminationTime" use="optional" type="dateTime"></attribute>
+    	<attribute name="takenInCharge" use="required" type="boolean"></attribute>
+    </complexType>
+   
+    <!-- WFReader... -->      	
+      	<xsd:element name="getWorkFlows">
+    		<xsd:annotation><xsd:documentation>The element that represents a request for the getWorkFlows operation</xsd:documentation></xsd:annotation>
+        	<xsd:complexType>
+            	
+        	</xsd:complexType>
+      	</xsd:element>
+      	<xsd:element name="getWorkFlowsResponse">
+      		<xsd:annotation><xsd:documentation>The element that represents a response for the getWorkFlows operation</xsd:documentation></xsd:annotation>
+		    <xsd:complexType>
+		    	<xsd:sequence>
+		    		<xsd:element name="flowName" type="wf:nameType" minOccurs="0" maxOccurs="unbounded">
+		    			<xsd:annotation><xsd:documentation>The list of names of WorkFlows</xsd:documentation></xsd:annotation>
+		    		</xsd:element>
+		    	</xsd:sequence>
+		    </xsd:complexType>
+      	</xsd:element>
+      	
+      	<xsd:element name="getWorkFlow">
+    		<xsd:annotation><xsd:documentation>The element that represents a request for the getWorkFlow operation</xsd:documentation></xsd:annotation>
+        	<xsd:complexType>
+            	<xsd:sequence>
+       		    	<xsd:element name="flowName" type="wf:nameType" />   		
+          		</xsd:sequence>
+        	</xsd:complexType>
+      	</xsd:element>
+      	<xsd:element name="getWorkFlowResponse">
+      		<xsd:annotation><xsd:documentation>The element that represents a response for the getWorkFlow operation</xsd:documentation></xsd:annotation>
+		    <xsd:complexType>
+		    	<xsd:sequence>
+		    		<xsd:element name="workflow" type="wf:workflowType" >
+		    			<xsd:annotation><xsd:documentation>The WorkFlow</xsd:documentation></xsd:annotation>
+		    		</xsd:element>
+		    	</xsd:sequence>
+		    </xsd:complexType>
+      	</xsd:element>
+  	
+    	
+      	
+      	
+  	
+    	<xsd:element name="getProcesses">
+    		<xsd:annotation><xsd:documentation>The element that represents a request for the getProcesses operation</xsd:documentation></xsd:annotation>
+        	<xsd:complexType>
+            	<xsd:sequence>
+            		<xsd:element name="flowName" type="wf:nameType" minOccurs="0">
+            			<xsd:annotation><xsd:documentation>The workFlow name</xsd:documentation></xsd:annotation>
+            		</xsd:element>
+            		
+          		</xsd:sequence>
+        	</xsd:complexType>
+      	</xsd:element>
+      	<xsd:element name="getProcessesResponse">
+      		<xsd:annotation><xsd:documentation>The element that represents a response for the getProcesses operation</xsd:documentation></xsd:annotation>
+		    <xsd:complexType>
+		    	<xsd:sequence>
+		    		<xsd:element name="startTime" type="xsd:dateTime" minOccurs="0" maxOccurs="unbounded">
+            			<xsd:annotation><xsd:documentation>The list of start times of processes in the specified workFlow</xsd:documentation></xsd:annotation>
+            		</xsd:element>
+		    	</xsd:sequence>
+		    </xsd:complexType>
+      	</xsd:element>
+  	<xsd:element name="getProcess">
+    		<xsd:annotation><xsd:documentation>The element that represents a request for the getProcess operation</xsd:documentation></xsd:annotation>
+        	<xsd:complexType>
+            	<xsd:sequence>
+            		<xsd:element name="flowName" type="wf:nameType">
+            			<xsd:annotation><xsd:documentation>The workFlow name</xsd:documentation></xsd:annotation>
+            		</xsd:element>
+            		<xsd:element name="startTime" type="xsd:dateTime">
+            			<xsd:annotation><xsd:documentation>The start time of process in the specified workFlow</xsd:documentation></xsd:annotation>
+            		</xsd:element>
+          		</xsd:sequence>
+        	</xsd:complexType>
+      	</xsd:element>
+      	<xsd:element name="getProcessResponse">
+      		<xsd:annotation><xsd:documentation>The element that represents a response for the getProcess operation</xsd:documentation></xsd:annotation>
+		    <xsd:complexType>
+		    	<xsd:sequence>
+		    		<xsd:element name="process" type="wf:processType">
+            			<xsd:annotation><xsd:documentation>The type of process in the specified workFlow</xsd:documentation></xsd:annotation>
+            		</xsd:element>
+		    	</xsd:sequence>
+		    </xsd:complexType>
+      	</xsd:element>
+  	
+    	 	
+  <!-- WFReader... -->
+ 
+  <!-- WFProcessCreator... -->
+  <xsd:element name="createProcess">
+    		<xsd:annotation><xsd:documentation>The element that represents a request for the createProcess operation</xsd:documentation></xsd:annotation>
+        	<xsd:complexType>
+            	<xsd:sequence>
+            		<xsd:element name="flowName" type="wf:nameType">
+            			<xsd:annotation><xsd:documentation>The name of the workflow</xsd:documentation></xsd:annotation>
+            		</xsd:element>
+          		</xsd:sequence>
+        	</xsd:complexType>
+      	</xsd:element>
+    	<xsd:element name="createProcessResponse">
+    		<xsd:annotation><xsd:documentation>The element that represents a response for the createProcess operation</xsd:documentation></xsd:annotation>
+        	<xsd:complexType>
+            	<xsd:sequence />
+        	</xsd:complexType>
+      	</xsd:element> 	
+      	
+ <!-- WFProcessCreator... -->  
+ 
+ <!-- WFTakeOverAction... -->  
+ <xsd:element name="takeOverAction">
+    		<xsd:annotation><xsd:documentation>The element that represents a request for the takeOverAction operation</xsd:documentation></xsd:annotation>
+        	<xsd:complexType>
+            	<xsd:sequence>
+            		<xsd:element name="actionName" type="wf:nameType">
+            			<xsd:annotation><xsd:documentation>The name of the action</xsd:documentation></xsd:annotation>
+            		</xsd:element>
+            		<xsd:element name="startTime" type="xsd:dateTime">
+            			<xsd:annotation><xsd:documentation>The possible startTime of the process</xsd:documentation></xsd:annotation>
+            		</xsd:element>
+            		<xsd:element name="flowName" type="wf:nameType">
+            			<xsd:annotation><xsd:documentation>The name of the workflow</xsd:documentation></xsd:annotation>
+            		</xsd:element>
+            		<xsd:element name="actor" type="wf:actorType">
+            			<xsd:annotation><xsd:documentation>The name and role of the actor</xsd:documentation></xsd:annotation>
+            		</xsd:element>
+            		
+          		</xsd:sequence>
+        	</xsd:complexType>
+      	</xsd:element>
+    	<xsd:element name="takeOverActionResponse">
+    		<xsd:annotation><xsd:documentation>The element that represents a response for the takeOverAction operation</xsd:documentation></xsd:annotation>
+        	<xsd:complexType>
+            	<xsd:sequence />
+        	</xsd:complexType>
+      	</xsd:element> 	 
+  <!-- WFTakeOverAction... -->    	
+   	
+   <!-- WFCompleteAction... --> 
+   <xsd:element name="checkSimpleOrProcess">
+    		<xsd:annotation><xsd:documentation>The element that represents a request for the checkSimpleOrProcess operation</xsd:documentation></xsd:annotation>
+        	<xsd:complexType>
+            	<xsd:sequence>
+            		<xsd:element name="actionName" type="wf:nameType">
+            			<xsd:annotation><xsd:documentation>The name of the action</xsd:documentation></xsd:annotation>
+            		</xsd:element>
+            		<xsd:element name="flowName" type="wf:nameType">
+            			<xsd:annotation><xsd:documentation>The name of the workflow</xsd:documentation></xsd:annotation>
+            		</xsd:element>
+          		</xsd:sequence>
+        	</xsd:complexType>
+      	</xsd:element>
+    	<xsd:element name="checkSimpleOrProcessResponse">
+    		<xsd:annotation><xsd:documentation>The element that represents a response for the checkSimpleOrProcess operation</xsd:documentation></xsd:annotation>
+		    <xsd:complexType>
+		    	<xsd:sequence>
+		    		<xsd:element name="nextActions" type="wf:nameType" minOccurs="0" maxOccurs="unbounded" nillable="true">
+            			<xsd:annotation><xsd:documentation>The list of next possible actions if the action is simple action</xsd:documentation></xsd:annotation>
+            		</xsd:element>
+            		<xsd:element name="relatedWorkflow" type="wf:nameType" nillable="true">
+            			<xsd:annotation><xsd:documentation>The name of the related workflow if the action is process action</xsd:documentation></xsd:annotation>
+            		</xsd:element>
+		    	</xsd:sequence>
+		    </xsd:complexType>
+      	</xsd:element> 	 
+      	
+      	<xsd:element name="completeAction">
+    		<xsd:annotation><xsd:documentation>The element that represents a request for the completeAction operation</xsd:documentation></xsd:annotation>
+        	<xsd:complexType>
+            	<xsd:sequence>
+            		<xsd:element name="actionName" type="wf:nameType">
+            			<xsd:annotation><xsd:documentation>The name of the action</xsd:documentation></xsd:annotation>
+            		</xsd:element>
+            		<xsd:element name="startTime" type="xsd:dateTime">
+            			<xsd:annotation><xsd:documentation>The possible startTime of the process</xsd:documentation></xsd:annotation>
+            		</xsd:element>
+            		<xsd:element name="flowName" type="wf:nameType">
+            			<xsd:annotation><xsd:documentation>The name of the workflow</xsd:documentation></xsd:annotation>
+            		</xsd:element>
+            		<xsd:element name="actor" type="wf:actorType">
+            			<xsd:annotation><xsd:documentation>The name and role of the actor</xsd:documentation></xsd:annotation>
+            		</xsd:element>
+            		<xsd:element name="nextActions" type="wf:nameType" minOccurs="0" maxOccurs="unbounded" nillable="true">
+            			<xsd:annotation><xsd:documentation>The list of next possible actions if the action is simple action</xsd:documentation></xsd:annotation>
+            		</xsd:element>
+            		<xsd:element name="relatedWorkflow" type="wf:nameType" nillable="true">
+            			<xsd:annotation><xsd:documentation>The name of the related workflow if the action is process action</xsd:documentation></xsd:annotation>
+            		</xsd:element>
+          		</xsd:sequence>
+        	</xsd:complexType>
+      	</xsd:element>
+    	<xsd:element name="completeActionResponse">
+    		<xsd:annotation><xsd:documentation>The element that represents a response for the completeAction operation</xsd:documentation></xsd:annotation>
+        	<xsd:complexType>
+            	<xsd:sequence />
+        	</xsd:complexType>
+      	</xsd:element> 	 
+   
+   <!-- WFCompleteAction... --> 
+   
+   
+   
+   
+   <!-- WFCompleteAction... -->    	
+      	
+      	<xsd:element name="WrongArgumentFault" type="xsd:string">
+  		<xsd:annotation><xsd:documentation>A fault raised when an argument in the request is Wrong</xsd:documentation></xsd:annotation>
+  		</xsd:element>
+    	<xsd:element name="WrongStartTimeFault">
+    	<xsd:annotation><xsd:documentation>A fault raised when the start time is not the expected one</xsd:documentation></xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+          	</xsd:sequence>
+        </xsd:complexType>
+      	</xsd:element>
+    	<xsd:element name="ServerErrorFault">
+    		<xsd:annotation><xsd:documentation>A fault raised when an internal server error occurred</xsd:documentation></xsd:annotation>
+        	<xsd:complexType>
+            	<xsd:sequence>
+          		</xsd:sequence>
+        	</xsd:complexType>
+      	</xsd:element>
+    	<xsd:element name="WrongWorkFlowFault" type="xsd:string">
+    		<xsd:annotation><xsd:documentation>A fault raised when a work flow name is Wrong</xsd:documentation></xsd:annotation>
+    	</xsd:element>
+    	<xsd:element name="WrongActorFault" type="xsd:string">
+    		<xsd:annotation><xsd:documentation>A fault raised when a actor name is Wrong</xsd:documentation></xsd:annotation>
+    	</xsd:element>
+    	<xsd:element name="WrongActionFault" type="xsd:string">
+    		<xsd:annotation><xsd:documentation>A fault raised when a action name is Wrong</xsd:documentation></xsd:annotation>
+    	</xsd:element>
+    
+</xsd:schema>

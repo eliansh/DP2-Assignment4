@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<definitions name="Workflow" targetNamespace="http://www.example.org/Workflow/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:wf="http://www.example.org/Workflow/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <types>
+  	<xsd:schema>
+  		<xsd:import namespace="http://www.example.org/Workflow/" schemaLocation="Workflow.xsd"/>
+  	</xsd:schema>
+        <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/Workflow/"><xsd:element name="in" type="xsd:string"></xsd:element><xsd:element name="out" type="xsd:string"></xsd:element><xsd:element name="in1" type="xsd:string"></xsd:element><xsd:element name="out1" type="xsd:string"></xsd:element><xsd:element name="in2" type="xsd:string"></xsd:element><xsd:element name="out2" type="xsd:string"></xsd:element></xsd:schema>
+    </types>
+
+
+
+  <message name="ServerErrorFault">
+  	<part name="parameters" element="wf:ServerErrorFault"></part>
+  </message>
+  <message name="WrongArgumentFault">
+  	<part name="parameters" element="wf:WrongArgumentFault"></part>
+  </message>
+  <message name="WrongStartTimeFault">
+  	<part name="parameters" element="wf:WrongStartTimeFault"></part>
+  </message>
+  <message name="WrongWorkFlowFault">
+  	<part name="parameters" element="wf:WrongWorkFlowFault"></part>
+  </message>
+  <message name="WrongActorFault">
+  	<part name="parameters" element="wf:WrongActorFault"></part>
+  </message>
+  
+  <message name="WrongActionFault">
+  	<part name="parameters" element="wf:WrongActionFault"></part>
+  </message>
+  
+  <message name="getWorkFlowsRequest">
+  	<part element="wf:getWorkFlows" name="parameters"/>
+  </message>
+  <message name="getWorkFlowsResponse">
+    <part element="wf:getWorkFlowsResponse" name="parameters"/>
+  </message>
+  
+  
+  <message name="getProcessesRequest">
+  	<part element="wf:getProcesses" name="parameters"/>
+  </message>
+  <message name="getProcessesResponse">
+    <part element="wf:getProcessesResponse" name="parameters"/>
+  </message>
+  
+  <message name="getWorkFlowRequest">
+  	<part element="wf:getWorkFlow" name="parameters"/>
+  </message>
+  <message name="getWorkFlowResponse">
+    <part element="wf:getWorkFlowResponse" name="parameters"/>
+  </message>
+  
+  
+  <message name="getProcessRequest">
+  	<part element="wf:getProcess" name="parameters"/>
+  </message>
+  <message name="getProcessResponse">
+    <part element="wf:getProcessResponse" name="parameters"/>
+  </message>
+  
+  
+
+
+  <message name="createProcessRequest">
+  	<part element="wf:createProcess" name="parameters"/>
+  </message>
+  <message name="createProcessResponse">
+  	<part element="wf:createProcessResponse" name="parameters"/>
+  </message>
+
+<message name="checkSimpleOrProcessRequest">
+  	<part element="wf:checkSimpleOrProcess" name="parameters"/>
+  </message>
+  <message name="checkSimpleOrProcessResponse">
+  	<part element="wf:checkSimpleOrProcessResponse" name="parameters"/>
+  </message>
+  <message name="takeOverActionRequest">
+  	<part name="parameters" element="wf:takeOverAction"></part>
+  </message>
+  <message name="takeOverActionResponse">
+  	<part name="parameters" element="wf:takeOverActionResponse"></part>
+  </message>
+  <message name="completeActionRequest">
+  	<part name="parameters" element="wf:completeAction"></part>
+  </message>
+  <message name="completeActionResponse">
+  	<part name="parameters" element="wf:completeActionResponse"></part>
+  </message>
+  <portType name="WFReader">
+    <documentation>Read-only interface for Processes and WorkFlows</documentation>
+    <operation name="getWorkFlows">
+      <documentation>Operation for reading (paginated) list of workFlows</documentation>
+      <input message="wf:getWorkFlowsRequest"/>
+      <output message="wf:getWorkFlowsResponse"/>
+      <fault name="ServerErrorFault" message="wf:ServerErrorFault" />
+      
+    </operation>
+   
+    <operation name="getProcesses">
+      <documentation>Operation for reading (paginated) list of processes</documentation>
+      <input message="wf:getProcessesRequest"/>
+      <output message="wf:getProcessesResponse"/>
+      <fault name="WrongArgumentFault" message="wf:WrongArgumentFault" />
+      <fault name="ServerErrorFault" message="wf:ServerErrorFault" />
+      
+    </operation>
+    
+    <operation name="getWorkFlow">
+      <documentation>Operation for reading information about a single workflow</documentation>
+      <input message="wf:getWorkFlowRequest"/>
+      <output message="wf:getWorkFlowResponse"/>
+      <fault name="WrongArgumentFault" message="wf:WrongArgumentFault" />
+      <fault name="ServerErrorFault" message="wf:ServerErrorFault" />
+      
+    </operation>
+   
+    <operation name="getProcess">
+      <documentation>Operation for reading information about a single process</documentation>
+      <input message="wf:getProcessRequest"/>
+      <output message="wf:getProcessResponse"/>
+      <fault name="WrongArgumentFault" message="wf:WrongArgumentFault" />
+      <fault name="ServerErrorFault" message="wf:ServerErrorFault" />
+      
+    </operation>
+   
+  </portType>
+
+
+
+  <portType name="WFProcessCreator">
+  	 <documentation>Interface for creating processes</documentation>
+    <operation name="createProcess">
+      <documentation>Operation for create process </documentation>
+      <input message="wf:createProcessRequest"/>
+      <output message="wf:createProcessResponse"/>
+      <fault name="WrongArgumentFault" message="wf:WrongArgumentFault" />
+      <fault name="WrongWorkFlowFault" message="wf:WrongWorkFlowFault" />
+      <fault name="ServerErrorFault" message="wf:ServerErrorFault" />
+      <fault name="WrongStartTimeFault" message="wf:WrongStartTimeFault" />
+    </operation>
+  </portType>
+
+  <portType name="WFTakeOverAction">
+     <documentation>Interface for take over an action</documentation>
+  	<operation name="takeOverAction">
+  		<input message="wf:takeOverActionRequest"></input>
+  		<output message="wf:takeOverActionResponse"></output>
+  	  <fault name="WrongArgumentFault" message="wf:WrongArgumentFault" />
+      <fault name="WrongWorkFlowFault" message="wf:WrongWorkFlowFault" />
+      <fault name="ServerErrorFault" message="wf:ServerErrorFault" />
+      <fault name="WrongStartTimeFault" message="wf:WrongStartTimeFault" />
+      <fault name="WrongActorFault" message="wf:WrongActorFault" />
+  	</operation>
+  </portType>
+  <portType name="WFCompleteAction">
+  	<documentation>Interface for complete an action</documentation>
+  	<operation name="completeAction">
+  		<input message="wf:completeActionRequest"></input>
+  		<output message="wf:completeActionResponse"></output>
+  	  <fault name="WrongArgumentFault" message="wf:WrongArgumentFault" />
+      <fault name="WrongWorkFlowFault" message="wf:WrongWorkFlowFault" />
+      <fault name="ServerErrorFault" message="wf:ServerErrorFault" />
+      <fault name="WrongStartTimeFault" message="wf:WrongStartTimeFault" />
+      <fault name="WrongActorFault" message="wf:WrongActorFault" />
+      <fault name="WrongActionFault" message="wf:WrongActionFault" />
+      
+  	</operation>
+  	<operation name="checkSimpleOrProcess">
+  		<input message="wf:checkSimpleOrProcessRequest"></input>
+  		<output message="wf:checkSimpleOrProcessResponse"></output>
+  	  <fault name="WrongArgumentFault" message="wf:WrongArgumentFault" />
+      <fault name="WrongWorkFlowFault" message="wf:WrongWorkFlowFault" />
+      <fault name="ServerErrorFault" message="wf:ServerErrorFault" />
+      <fault name="WrongActionFault" message="wf:WrongActionFault" />
+  	</operation>
+  </portType>
+  <binding name="WFReaderSOAP" type="wf:WFReader">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="getWorkFlows">
+      <soap:operation soapAction="http://www.example.org/WFReader/getWorkFlows"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+  	  <fault name="ServerErrorFault">
+  	    <soap:fault use="literal" name="ServerErrorFault"></soap:fault>
+  	  </fault>
+  	  
+    </operation>
+   
+    
+    <operation name="getProcesses">
+      <soap:operation soapAction="http://www.example.org/WFReader/getProcesses"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+  	  <fault name="WrongArgumentFault">
+  	    <soap:fault use="literal" name="WrongArgumentFault"></soap:fault>
+  	  </fault>
+  	  <fault name="ServerErrorFault">
+  	    <soap:fault use="literal" name="ServerErrorFault"></soap:fault>
+  	  </fault>
+  	  </operation>
+  	  
+  	   <operation name="getWorkFlow">
+      <soap:operation soapAction="http://www.example.org/WFReader/getWorkFlow"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+      <fault name="WrongArgumentFault">
+  	    <soap:fault use="literal" name="WrongArgumentFault"></soap:fault>
+  	  </fault>
+  	  <fault name="ServerErrorFault">
+  	    <soap:fault use="literal" name="ServerErrorFault"></soap:fault>
+  	  </fault>
+    </operation>
+   
+    
+    <operation name="getProcess">
+      <soap:operation soapAction="http://www.example.org/WFReader/getProcess"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+  	  <fault name="WrongArgumentFault">
+  	    <soap:fault use="literal" name="WrongArgumentFault"></soap:fault>
+  	  </fault>
+  	  <fault name="ServerErrorFault">
+  	    <soap:fault use="literal" name="ServerErrorFault"></soap:fault>
+  	  </fault>
+  	  
+    </operation>
+  
+  </binding>
+
+
+
+  <binding name="WFProcessCreatorSOAP" type="wf:WFProcessCreator">
+  <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+      <operation name="createProcess">
+      <soap:operation soapAction="http://www.example.org/WFProcessCreator/createProcess"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+  	  <fault name="WrongWorkFlowFault">
+  	    <soap:fault use="literal" name="WrongWorkFlowFault"></soap:fault>
+  	  </fault>
+  	   <fault name="ServerErrorFault">
+  	    <soap:fault use="literal" name="ServerErrorFault"></soap:fault>
+  	  </fault>
+  	  <fault name="WrongArgumentFault">
+  	    <soap:fault use="literal" name="WrongArgumentFault"></soap:fault> 	    
+  	  </fault>
+  	   <fault name="WrongStartTimeFault">
+  	    <soap:fault use="literal" name="WrongStartTimeFault"></soap:fault>
+  	  </fault>
+    </operation> 
+  </binding>
+  
+  <binding name="WFTakeOverActionSOAP" type="wf:WFTakeOverAction">
+  <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="takeOverAction">
+      <soap:operation soapAction="http://www.example.org/WFTakeOverAction/takeOverAction"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+  	  <fault name="WrongArgumentFault">
+  	    <soap:fault use="literal" name="WrongArgumentFault"></soap:fault>
+  	  </fault>
+  	   <fault name="WrongWorkFlowFault">
+  	    <soap:fault use="literal" name="WrongWorkFlowFault"></soap:fault>
+  	  </fault>
+  	  <fault name="ServerErrorFault">
+  	    <soap:fault use="literal" name="ServerErrorFault"></soap:fault> 	    
+  	  </fault>
+  	   <fault name="WrongStartTimeFault">
+  	    <soap:fault use="literal" name="WrongStartTimeFault"></soap:fault>
+  	  </fault>
+  	  <fault name="WrongActorFault">
+  	    <soap:fault use="literal" name="WrongActorFault"></soap:fault>
+  	  </fault>
+    </operation> 
+  </binding>
+
+  <binding name="WFCompleteActionSOAP" type="wf:WFCompleteAction">
+   <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="completeAction">
+      <soap:operation soapAction="http://www.example.org/WFCompleteAction/completeAction"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+  	  <fault name="WrongArgumentFault">
+  	    <soap:fault use="literal" name="WrongArgumentFault"></soap:fault>
+  	  </fault>
+  	   <fault name="WrongWorkFlowFault">
+  	    <soap:fault use="literal" name="WrongWorkFlowFault"></soap:fault>
+  	  </fault>
+  	  <fault name="ServerErrorFault">
+  	    <soap:fault use="literal" name="ServerErrorFault"></soap:fault> 	    
+  	  </fault>
+  	   <fault name="WrongStartTimeFault">
+  	    <soap:fault use="literal" name="WrongStartTimeFault"></soap:fault>
+  	  </fault>
+  	  <fault name="WrongActorFault">
+  	    <soap:fault use="literal" name="WrongActorFault"></soap:fault>
+  	  </fault>
+  	  <fault name="WrongActionFault">
+  	    <soap:fault use="literal" name="WrongActionFault"></soap:fault>
+  	  </fault>
+    </operation> 
+    
+    
+    <operation name="checkSimpleOrProcess">
+      <soap:operation soapAction="http://www.example.org/WFCompleteAction/checkSimpleOrProcess"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+  	  <fault name="WrongArgumentFault">
+  	    <soap:fault use="literal" name="WrongArgumentFault"></soap:fault>
+  	  </fault>
+  	   <fault name="WrongWorkFlowFault">
+  	    <soap:fault use="literal" name="WrongWorkFlowFault"></soap:fault>
+  	  </fault>
+  	  <fault name="ServerErrorFault">
+  	    <soap:fault use="literal" name="ServerErrorFault"></soap:fault> 	    
+  	  </fault>
+  	   <fault name="WrongActionFault">
+  	    <soap:fault use="literal" name="WrongActionFault"></soap:fault>
+  	  </fault>
+    </operation>
+  </binding>
+  <service name="WFReader">
+    <port binding="wf:WFReaderSOAP" name="WFReaderSOAP">
+      <soap:address location="http://localhost:7071/wfinfo"/>
+    </port>
+  </service>
+
+  <service name="WFProcessCreator">
+  	<port binding="wf:WFProcessCreatorSOAP" name="WFProcessCreatorSOAP">
+      <soap:address location="http://localhost:7070/wfcontrol"/>
+    </port>
+  </service>
+  <service name="WFTakeOverAction">
+  	<port binding="wf:WFTakeOverActionSOAP" name="WFTakeOverActionSOAP">
+      <soap:address location="http://localhost:7070/wfcontrol"/>
+    </port>
+  </service>
+  <service name="WFCompleteAction">
+  	<port binding="wf:WFCompleteActionSOAP" name="WFCompleteActionSOAP">
+      <soap:address location="http://localhost:7070/wfcontrol"/>
+    </port>
+  </service>
+</definitions>
